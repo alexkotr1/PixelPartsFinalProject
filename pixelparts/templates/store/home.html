@@ -2,25 +2,40 @@
 {% load static %}
 
 {% block extra_css %}
-    <link href="{% static 'css/home.css' %}" rel="stylesheet">
+    <link href="{% static 'css/store/home.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
     <section class="hero">
         <h1>Welcome to PixelParts</h1>
     </section>
-    <section class="featured">
+    <section class="container categories">
+        <h2>Categories</h2>
+        <div class="home-grid">
+        {% for category in categories %}
+            <a class="home-card category" href="#">
+                {% if category.bootstrap_icon_code %}
+                    <i class="{{ category.bootstrap_icon_code}}"></i>
+                {% else %}
+                    <i class="bi bi-box-seam"></i>
+                {% endif %}
+                <p class="home-card-subtitle-2">{{ category }}</p>
+            </a>
+        {% endfor %}
+       </div>
+    </section>
+    <section class="container featured">
         <h2>Featured Products</h2>
         {% if featured  %}
-            <div class="featured-products-grid">
+            <div class="home-grid">
                 {% for product in featured %}
-                    <a class="product-card" href="#">
+                    <a class="home-card" href="{% url 'product_detail' product.pk %}">
                         {% if product.image %}
                             <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
                         {% endif %}
                         <h3>{{ product.name }}</h3>
-                        <p class="brand">{{ product.brand }}</p>
-                        <p class="price">{{ product.price }}€</p>
+                        <p class="home-card-subtitle">{{ product.brand }}</p>
+                        <p class="home-card-subtitle-2">{{ product.price }}€</p>
                     </a>
                 {% endfor %}
             </div>

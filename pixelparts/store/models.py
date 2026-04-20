@@ -9,6 +9,7 @@ class Category(models.Model):
     name = models.CharField(max_length=200,unique=True)
     verbose_name = 'Category'
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True)
+    bootstrap_icon_code = models.CharField(max_length=50, blank=True)
 
     class Meta:
         verbose_name_plural = 'Categories'

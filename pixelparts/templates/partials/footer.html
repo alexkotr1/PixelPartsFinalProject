@@ -1,5 +1,16 @@
-<footer class="bg-dark mt-auto">
-    <div class="container text-center">
-        <small>2026 PixelParts</small>
+<footer class="site-footer">
+    <div class="container footer-content">
+        <div class="footer-brand">
+            <h3>2026 PixelParts</h3>
+            <p>All Rights Reserved.</p>
+        </div>
+        <div class="footer-links">
+            <h4>Categories</h4>
+            <ul>
+                {% for category in categories %}
+                    <li><a href="#">{{ category }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </footer>

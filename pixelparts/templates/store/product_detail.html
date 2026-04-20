@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/product_detail.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <section class="product-detail">
+        <div class="product-image-box">
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% endif %}
+        </div>
+        <div class="product-info">
+            <h1>{{ product.name }}</h1>
+            <p class="brand">{{ product.brand }}</p>
+            <p class="category">{{ product.category }}</p>
+            <p class="price">{{ product.price }}€</p>
+            <p class="stock">In stock: {{ product.stock }}</p>
+            <p class="description">{{ product.description }}</p>
+        </div>
+    </section>
+{% endblock %}
