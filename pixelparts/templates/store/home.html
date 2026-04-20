@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <h1>Welcome to PixelParts</h1>
+    </section>
+    <section class="featured">
+        <h2>Featured Products</h2>
+        {% if featured  %}
+            <div class="featured-products-grid">
+                {% for product in featured %}
+                    <a class="product-card" href="#">
+                        {% if product.image %}
+                            <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% endif %}
+                        <h3>{{ product.name }}</h3>
+                        <p class="brand">{{ product.brand }}</p>
+                        <p class="price">{{ product.price }}€</p>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}
