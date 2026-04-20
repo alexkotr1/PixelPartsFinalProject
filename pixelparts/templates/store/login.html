@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/store/auth.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <section class="auth-box">
+        <h1>Login</h1>
+
+        {% if form.errors %}
+            {% for error in form.non_field_errors %}
+                <p class="error">{{ error }}</p>
+            {% endfor %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label for="id_username">Username</label>
+            <input type="text" name="username" id="id_username" maxlength="150" required>
+
+            <label for="id_password">Password</label>
+            <input type="password" name="password" id="id_password" required>
+
+            <button type="submit">Login</button>
+        </form>
+    </section>
+{% endblock %}
