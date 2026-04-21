@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/cart/cart.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <section class="cart">
+        <h1>Cart</h1>
+        {% if items %}
+            <table class="cart-table">
+                <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Subtotal</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'product_detail' item.product.pk %}">{{ item.product.name }}</a>
+                            </td>
+                            <td>{{ item.product.price }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td>{{ item.subtotal }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3">Total</td>
+                        <td>{{ total }}</td>
+                    </tr>
+                </tfoot>
+            </table>
+
+           <form method="post" action="{% url 'checkout' %}">
+                {% csrf_token %}
+                <button type="submit" class="checkout-btn">Complete purchase</button>
+            </form>
+        {% else %}
+            <p>Your cart is empty</p>
+        {% endif %}
+    </section>
+{% endblock %}

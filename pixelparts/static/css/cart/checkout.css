@@ -1,0 +1,18 @@
+.checkout-done {
+    max-width: 500px;
+    margin: 60px auto;
+    padding: 40px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fff;
+}
+
+.checkout-done h1 {
+    margin-bottom: 15px;
+}
+
+.checkout-done p {
+    margin-bottom: 20px;
+    color: #555;
+}

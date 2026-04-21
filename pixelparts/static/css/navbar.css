@@ -16,8 +16,3 @@
 .nav-link:hover {
     color: rgba(255, 255, 255, 0.9);
 }
-
-.nav-user {
-    color: rgba(255, 255, 255, 0.7);
-    padding: 8px 12px;
-}
