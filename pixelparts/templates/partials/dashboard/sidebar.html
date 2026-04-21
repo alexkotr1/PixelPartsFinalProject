@@ -1,0 +1,40 @@
+<!-- https://coreui.io/bootstrap/docs/components/sidebar/ -->
+{% block extra_css %}
+    <link href="https://cdn.jsdelivr.net/npm/@coreui/icons@3.0.1/css/all.min.css" rel="stylesheet">
+{% endblock %}
+<div class="sidebar sidebar-dark sidebar-fixed">
+  <div class="sidebar-header border-bottom">
+      <div class="sidebar-brand"> PixelParts</div>
+  </div>
+  <ul class="sidebar-nav">
+    <li class="nav-title">Options</li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">
+        <i class="nav-icon cil-speedometer"></i> Overview
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">
+        <i class="nav-icon cil-devices"></i> Products
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">
+        <i class="nav-icon cil-folder"></i> Categories
+      </a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="#">
+        <i class="nav-icon cil-people"></i> Users
+      </a>
+    </li>
+      </ul>
+    <div class="sidebar-footer border-top d-flex">
+        <form method="post" action="{% url 'store:logout' %}">
+            {% csrf_token %}
+            <button class="nav-link btn btn-link text-white" type="submit">
+                <i class="nav-icon cil-account-logout"></i> Logout
+            </button>
+        </form>
+    </div>
+</div>

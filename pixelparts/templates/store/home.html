@@ -13,7 +13,7 @@
         <h2>Categories</h2>
         <div class="home-grid">
         {% for category in categories %}
-            <a class="home-card category" href="{% url 'catalogue' %}?category={{ category.id }}">
+            <a class="home-card category" href="{% url 'store:catalogue' %}?category={{ category.id }}">
                 {% if category.bootstrap_icon_code %}
                     <i class="{{ category.bootstrap_icon_code}}"></i>
                 {% else %}
@@ -29,7 +29,7 @@
         {% if featured  %}
             <div class="home-grid">
                 {% for product in featured %}
-                    <a class="home-card" href="{% url 'product_detail' product.pk %}">
+                    <a class="home-card" href="{% url 'store:product_detail' product.pk %}">
                         {% if product.image %}
                             <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
                         {% endif %}

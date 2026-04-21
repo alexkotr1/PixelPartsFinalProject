@@ -8,7 +8,7 @@
             <h4>Categories</h4>
             <ul>
                 {% for category in categories %}
-                    <li><a href="{% url 'catalogue' %}?category={{ category.id }}">{{ category }}</a></li>
+                    <li><a href="{% url 'store:catalogue' %}?category={{ category.id }}">{{ category }}</a></li>
                 {% endfor %}
             </ul>
         </div>

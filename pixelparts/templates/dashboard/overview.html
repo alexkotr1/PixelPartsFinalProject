@@ -1,0 +1,49 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/dashboard/overview.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@coreui/coreui@5.6.1/dist/css/coreui.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    {% include 'partials/dashboard/sidebar.html' %}
+    <section class="dashboard-content">
+        <h2>Overview</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card stat-card">
+                <div class="stat-number">{{ purchases_this_month }}</div>
+                <p class="dashboard-card-subtitle">Purchases this month</p>
+            </div>
+            <div class="dashboard-card stat-card">
+                <div class="stat-number">{{ user_count }}</div>
+                <p class="dashboard-card-subtitle">Total users</p>
+            </div>
+            <div class="dashboard-card stat-card">
+                <div class="stat-number">{{ product_count }}</div>
+                <p class="dashboard-card-subtitle">Total products</p>
+            </div>
+        </div>
+
+        <h2>Featured Products</h2>
+        {% if featured %}
+            <div class="dashboard-grid">
+                {% for product in featured %}
+                    <a class="dashboard-card" href="{% url 'store:product_detail' product.pk %}">
+                        {% if product.image %}
+                            <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <img class="product-image" src="https://placehold.co/200x140?text=No+Image" alt="{{ product.name }}">
+                        {% endif %}
+                        <h3>{{ product.name }}</h3>
+                        <p class="home-card-subtitle">{{ product.brand }}</p>
+                        <p class="dashboard-card-subtitle-2">{{ product.price }}€</p>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No featured products.</p>
+        {% endif %}
+    </section>
+
+{% endblock %}

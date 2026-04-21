@@ -4,6 +4,11 @@ from django.db import models
 
 # Create your models here.
 
+ROLES = [
+    ('admin', 'Admin'),
+    ('moderator', "Moderator"),
+    ('user', 'User'),
+]
 
 
 class Category(models.Model):
@@ -30,6 +35,7 @@ class Product(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     featured = models.BooleanField(default=False)
     image = models.ImageField(upload_to='products/', blank=True, null=True)
+
     class Meta:
         verbose_name_plural = 'Products'
 
@@ -44,6 +50,7 @@ class UserProfile(models.Model):
     country = models.CharField(max_length=30, blank=True)
     date_of_birth = models.DateField(blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    role = models.CharField(max_length=10, choices=ROLES, default='user')
 
 
     class Meta:

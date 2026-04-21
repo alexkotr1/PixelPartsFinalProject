@@ -21,7 +21,7 @@
             <p class="description">{{ product.description }}</p>
         </div>
     </section>
-    <form method="post" action="{% url 'add_to_cart' product.pk %}" class="add-to-cart-form">
+    <form method="post" action="{% url 'cart:add_to_cart' product.pk %}" class="add-to-cart-form">
             {% csrf_token %}
             <label for="id_quantity">Quantity</label>
             <input type="number" name="quantity" id="id_quantity" min="1" max="{{ product.stock }}" value="1">

@@ -22,7 +22,7 @@
                     {% for item in items %}
                         <tr>
                             <td>
-                                <a href="{% url 'product_detail' item.product.pk %}">{{ item.product.name }}</a>
+                                <a href="{% url 'cart:product_detail' item.product.pk %}">{{ item.product.name }}</a>
                             </td>
                             <td>{{ item.product.price }}</td>
                             <td>{{ item.quantity }}</td>
@@ -38,7 +38,7 @@
                 </tfoot>
             </table>
 
-           <form method="post" action="{% url 'checkout' %}">
+           <form method="post" action="{% url 'cart:checkout' %}">
                 {% csrf_token %}
                 <button type="submit" class="checkout-btn">Complete purchase</button>
             </form>
