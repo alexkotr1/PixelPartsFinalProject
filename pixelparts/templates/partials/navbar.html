@@ -13,7 +13,7 @@
         <ul class="navbar-nav ms-auto">
              <a class="nav-link" href="{% url 'catalogue' %}">Catalogue</a>
             {% if user.is_authenticated %}
-                <li class="nav-item nav-user">{{ user.username }}</li>
+                <a class="nav-link" href="{% url 'profile' %}">{{ user.username }}</a>
                 <li class="nav-item">
                     <form method="post" action="{% url 'logout' %}">
                         {% csrf_token %}

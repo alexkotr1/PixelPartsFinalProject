@@ -1,7 +1,8 @@
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
-from .forms import RegisterForm
+from .forms import RegisterForm, ProfileEditForm
 from .models import Product, Category, UserProfile
 
 
@@ -92,5 +93,25 @@ def catalogue(request):
         'brands': brands,
 
     })
+
+@login_required
+def profile(request):
+    user = request.user
+    user_profile,created = UserProfile.objects.get_or_create(user=user)
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            if request.POST.get('delete_avatar'):
+                user_profile.avatar.delete(save=True)
+            user.email = form.cleaned_data['email']
+            user.first_name = form.cleaned_data["first_name"]
+            user.last_name = form.cleaned_data["last_name"]
+            user.save()
+            return redirect('profile')
+    else:
+        form = ProfileEditForm(instance=user_profile, initial={'email': user.email, 'first_name': user.first_name, 'last_name': user.last_name})
+
+    return render(request, 'store/profile.html', {'form': form, 'user_profile': user_profile})
 
 

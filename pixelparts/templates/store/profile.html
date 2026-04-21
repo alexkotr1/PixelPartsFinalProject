@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/store/profile.css' %}" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <section class="profile">
+        <h1>Profile</h1>
+        <div class="avatar-box">
+            {% if user_profile.avatar %}
+                <img src="{{ user_profile.avatar.url }}" alt="Avatar">
+            {% else %}
+                <i class="bi bi-person circle"></i>
+            {% endif %}
+        </div>
+
+        {% if form.errors %}
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <p class="error">{{ error }}</p>
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <label for="id_username">Username</label>
+            <input type="text" id="id_username" value="{{ user.username }}" disabled>
+
+            <label for="id_email">Email</label>
+            <input type="email" name="email" id="id_email" value="{{ form.email.value }}" maxlength="50" required>
+
+            <label for="id_first_name">First name</label>
+            <input type="text" name="first_name" id="id_first_name" value="{{ form.first_name.value }}" maxlength="50">
+
+            <label for="id_last_name">Last name</label>
+            <input type="text" name="last_name" id="id_last_name" value="{{ form.last_name.value}}" maxlength="50">
+
+            <label for="id_phone">Phone</label>
+            <input type="text" name="phone" id="id_phone" value="{{ form.phone.value }}" maxlength="13">
+
+            <label for="id_address">Address</label>
+            <input type="text" name="address" id="id_address" value="{{ form.address.value }}" maxlength="50">
+
+            <label for="id_city">City</label>
+            <input type="text" name="city" id="id_city" value="{{ form.city.value }}" maxlength="30">
+
+            <label for="id_country">Country</label>
+            <input type="text" name="country" id="id_country" value="{{ form.country.value }}" maxlength="30">
+
+            <label for="id_date_of_birth">Date of birth</label>
+            <input type="text" name="date_of_birth" id="id_date_of_birth" value="{% if form.date_of_birth.value %}{{ form.date_of_birth.value }}{% endif %}">
+
+            <label for="id_avatar">Profile picture</label>
+            <input type="file" name="avatar" id="id_avatar" accept="image/*">
+
+            {% if user_profile.avatar %}
+                <label class="checkbox-label">
+                    <input type="checkbox" name="delete_avatar">Remove avatar
+                </label>
+            {% endif %}
+            <button type="submit">Save Changes</button>
+        </form>
+    </section>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
+    <script src="{% static 'js/flatpickr.js' %}" defer></script>
+{% endblock %}
