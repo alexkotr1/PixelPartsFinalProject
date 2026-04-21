@@ -45,5 +45,8 @@ class UserProfile(models.Model):
     date_of_birth = models.DateField(blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
 
+
+    class Meta:
+        verbose_name_plural = 'User Profiles'
     def __str__(self):
         return self.user.username

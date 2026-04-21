@@ -19,7 +19,7 @@
                 {% endfor %}
             {% endfor %}
         {% endif %}
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
             <label for="id_username">Username</label>

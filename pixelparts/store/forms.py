@@ -11,6 +11,7 @@ class RegisterForm(UserCreationForm):
     city = forms.CharField(max_length=30, required=False)
     country = forms.CharField(max_length=30, required=False)
     date_of_birth = forms.DateField(required=False)
+    avatar = forms.ImageField(required=False)
 
     class Meta:
         model = User

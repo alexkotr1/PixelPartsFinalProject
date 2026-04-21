@@ -22,20 +22,21 @@ def product_detail(request, pk):
     return render(request, 'store/product_detail.html', {'product': product})
 
 def register(request):
-    form = RegisterForm(request.POST, request.FILES)
-    if form.is_valid():
-        user = form.save()
-        UserProfile.objects.create(user=user,
-                                   date_of_birth=form.cleaned_data['date_of_birth'],
-                                   avatar=form.cleaned_data['avatar'],
-                                   phone=form.cleaned_data['phone'],
-                                   address=form.cleaned_data['address'],
-                                   city=form.cleaned_data['city'],
-                                   country=form.cleaned_data['country'],
-        )
-        user.save()
-        login(request, user)
-        return redirect('home')
+    if request.method == 'POST':
+        form = RegisterForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = form.save()
+            UserProfile.objects.create(user=user,
+                                       date_of_birth=form.cleaned_data.get('date_of_birth'),
+                                       avatar=form.cleaned_data.get('avatar'),
+                                       phone=form.cleaned_data.get('phone', ''),
+                                       address=form.cleaned_data.get('address', ''),
+                                       city=form.cleaned_data.get('city', ''),
+                                       country=form.cleaned_data.get('country', ''),
+            )
+            user.save()
+            login(request, user)
+            return redirect('home')
     else:
         form = RegisterForm()
     return render(request, 'store/register.html', {'form': form})
