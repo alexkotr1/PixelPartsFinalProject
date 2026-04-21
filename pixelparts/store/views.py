@@ -41,3 +41,15 @@ def register(request):
         form = RegisterForm()
     return render(request, 'store/register.html', {'form': form})
 
+
+def catalogue(request):
+    category_id = request.GET.get('category')
+    if category_id:
+        category_id = int(category_id)
+        products = Product.objects.filter(category_id=category_id)
+    else:
+        products = Product.objects.all()
+    categories = Category.objects.all()
+    return render(request, 'store/catalogue.html', {'products': products, 'categories': categories, 'selected_category_id': category_id })
+
+
