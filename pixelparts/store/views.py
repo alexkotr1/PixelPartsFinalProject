@@ -80,7 +80,6 @@ def catalogue(request):
 
     categories = Category.objects.all()
     brands = Product.objects.values_list('brand', flat=True).distinct()
-    print(list(brands))
 
     return render(request, 'store/catalogue.html', {
         'products': products,
