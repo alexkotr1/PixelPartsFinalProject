@@ -44,12 +44,27 @@ def register(request):
 
 def catalogue(request):
     category_id = request.GET.get('category')
+    searched = request.GET.get('search_text')
+
+    products = Product.objects.all()
+
     if category_id:
         category_id = int(category_id)
-        products = Product.objects.filter(category_id=category_id)
-    else:
-        products = Product.objects.all()
+        products = products.filter(category_id=category_id)
+
+    if searched:
+        hits = []
+        for product in products:
+            if searched.lower() in product.name.lower() or searched.lower() in product.brand.lower():
+                hits.append(product)
+        products = hits
+
     categories = Category.objects.all()
-    return render(request, 'store/catalogue.html', {'products': products, 'categories': categories, 'selected_category_id': category_id })
+    return render(request, 'store/catalogue.html', {
+        'products': products,
+        'categories': categories,
+        'selected_category_id': category_id,
+        'search_text': "" if (searched and searched == "") or searched is None else searched,
+    })
 
 

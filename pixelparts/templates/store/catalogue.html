@@ -8,7 +8,13 @@
 {% block content %}
     <section class="catalogue">
         <h1>Catalogue</h1>
-
+        <form class="search-form" method="get" action="{% url 'catalogue' %}">
+            <input type="text" name="search_text" value="{{ search_text }}" placeholder="Search by name or brand" maxlength="100">
+            {% if selected_category_id %}
+                <input type="hidden" name="category" value="{{ selected_category_id }}">
+            {% endif %}
+            <button type="submit">Search</button>
+        </form>
         <div class="filter-bar">
             <a href="{% url 'catalogue' %}" class="filter-link {% if not selected_category_id %}active{% endif %}">All</a>
             {% for category in categories %}
