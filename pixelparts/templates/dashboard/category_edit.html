@@ -1,0 +1,33 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/dashboard/item_edit.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    {% include 'partials/dashboard/sidebar.html' %}
+    <section class="dashboard-content">
+        <h2>{% if category %}Edit Category{% else %}Create Category{% endif %}</h2>
+        <form method="post">
+            {% csrf_token %}
+
+            <label for="id_name">Name</label>
+            <input type="text" name="name" id="id_name" value="{{ category.name|default:'' }}" required>
+
+            <label for="id_parent">Parent</label>
+            <select name="parent" id="id_parent">
+                <option value="">-- None --</option>
+                {% for category in categories %}
+                    <option value="{{ category.pk }}" {% if category and category.parent and category.pk == category.parent.pk %}selected{% endif %}>{{ category.name }}</option>
+                {% endfor %}
+            </select>
+
+            <label for="id_bootstrap_icon_code">Bootstrap icon code</label>
+            <input type="text" name="bootstrap_icon_code" id="id_bootstrap_icon_code" value="{{ category.bootstrap_icon_code|default:'' }}">
+
+            <button type="submit">Save</button>
+            <a href="{% url 'dashboard:categories' %}">Cancel</a>
+        </form>
+    </section>
+{% endblock %}

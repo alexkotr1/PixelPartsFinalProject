@@ -7,7 +7,7 @@ from cart.models import Purchase, PurchaseItem
 
 def add_to_cart(request, pk):
     if not request.user.is_authenticated:
-        return redirect('login')
+        return redirect('store:login')
 
     cart = request.session.get('cart', {})
     quantity = int(request.POST.get('quantity'))
@@ -17,11 +17,11 @@ def add_to_cart(request, pk):
     else:
         cart[key] = quantity
     request.session['cart'] = cart
-    return redirect('cart')
+    return redirect('store:cart')
 
 def view_cart(request):
     if not request.user.is_authenticated:
-        return redirect('login')
+        return redirect('store:login')
 
     cart = request.session.get('cart', {})
     items = []
@@ -37,22 +37,22 @@ def view_cart(request):
 
 def remove_from_cart(request, pk):
     if not request.user.is_authenticated:
-        return redirect('login')
+        return redirect('store:login')
 
     cart = request.session.get('cart', {})
     key = str(pk)
     if key in cart:
         del cart[key]
         request.session['cart'] = cart
-    return redirect('cart')
+    return redirect('store:cart')
 
 def checkout(request):
     if not request.user.is_authenticated:
-        return redirect('login')
+        return redirect('store:login')
 
     cart = request.session['cart']
     if not cart:
-        return redirect('cart')
+        return redirect('store:cart')
     total = 0
     items_to_save = []
     for product_id in cart:

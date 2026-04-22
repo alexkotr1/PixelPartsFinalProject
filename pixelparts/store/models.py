@@ -27,7 +27,7 @@ class Category(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=200)
     verbose_name = 'Product'
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     brand = models.CharField(max_length=80)
     price = models.DecimalField(max_digits=6, decimal_places=2)
     stock = models.IntegerField(validators=[MinValueValidator(0)])

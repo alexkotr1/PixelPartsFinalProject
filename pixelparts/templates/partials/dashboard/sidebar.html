@@ -16,15 +16,17 @@
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#">
+      <a class="nav-link" href="{% url 'dashboard:categories' %}">
         <i class="nav-icon cil-folder"></i> Categories
       </a>
     </li>
-    <li class="nav-item">
-      <a class="nav-link" href="#">
-        <i class="nav-icon cil-people"></i> Users
-      </a>
-    </li>
+    {% if user.is_superuser or user.userprofile.role == 'admin'  %}
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'dashboard:users' %}">
+                <i class="nav-icon cil-people"></i> Users
+            </a>
+        </li>
+      {% endif %}
       </ul>
     <div class="sidebar-footer border-top d-flex">
         <form method="post" action="{% url 'store:logout' %}">

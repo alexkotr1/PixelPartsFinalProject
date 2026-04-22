@@ -2,17 +2,18 @@
 {% load static %}
 
 {% block extra_css %}
-    <link href="{% static 'css/dashboard/products.css' %}" rel="stylesheet">
+    <link href="{% static 'css/dashboard/crud.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block extra_js %}
-    <script src="{% static 'js/dashboard/products.js' %}" defer></script>
+    <script src="{% static 'js/dashboard/crud.js' %}" defer></script>
 {% endblock %}
 
 {% block content %}
     {% include 'partials/dashboard/sidebar.html' %}
     <section class="dashboard-content">
         <h2>Products</h2>
+        <a href="{% url 'dashboard:product_create' %}">Create</a>
         <table class="dashboard-table">
             <thead>
             <tr>
@@ -37,7 +38,7 @@
                         <button type="button"
                             data-bs-toggle="modal"
                             data-bs-target="#deleteModal"
-                            data-product-name="{{ product.name }}"
+                            data-item-name="{{ product.name }}"
                             data-delete-url="{% url 'dashboard:product_delete' product.pk %}"
                         >Delete</button>
                     </td>
@@ -64,7 +65,7 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?</p>
+            <p>Are you sure you want to delete <strong id="deleteItemName"></strong>?</p>
           </div>
           <div class="modal-footer">
             <form method="post" id="deleteForm">

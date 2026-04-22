@@ -37,7 +37,7 @@ def register(request):
             )
             user.save()
             login(request, user)
-            return redirect('home')
+            return redirect('store:home')
     else:
         form = RegisterForm()
     return render(request, 'store/register.html', {'form': form})
@@ -107,10 +107,12 @@ def profile(request):
             user.first_name = form.cleaned_data["first_name"]
             user.last_name = form.cleaned_data["last_name"]
             user.save()
-            return redirect('profile')
+            return redirect('store:profile')
     else:
         form = ProfileEditForm(instance=user_profile, initial={'email': user.email, 'first_name': user.first_name, 'last_name': user.last_name})
 
     return render(request, 'store/profile.html', {'form': form, 'user_profile': user_profile})
+
+
 
 
