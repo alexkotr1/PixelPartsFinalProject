@@ -1,0 +1,78 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/dashboard/products.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/dashboard/products.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+    {% include 'partials/dashboard/sidebar.html' %}
+    <section class="dashboard-content">
+        <h2>Products</h2>
+        <table class="dashboard-table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Brand</th>
+                <th>Price</th>
+                <th>Stock</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.brand }}</td>
+                    <td>{{ product.category }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>{{ product.stock }}</td>
+                    <td>
+                        <a href="">Edit</a>
+                        <button type="button"
+                            data-bs-toggle="modal"
+                            data-bs-target="#deleteModal"
+                            data-product-name="{{ product.name }}"
+                            data-delete-url="{% url 'dashboard:product_delete' product.pk %}"
+                        >Delete</button>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <div class="pagination">
+            {% if products.has_previous %}
+                <a href="?page={{ products.previous_page_number }}">Previous</a>
+            {% endif %}
+            <div>Page {{ products.number }} of {{ products.paginator.num_pages }}</div>
+            {% if products.has_next %}
+                    <a href="?page={{ products.next_page_number }}">Next</a>
+            {% endif %}
+        </div>
+    </section>
+    <!-- https://getbootstrap.com/docs/5.3/components/modal/ -->
+    <div class="modal" id="deleteModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete Product</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <p>Are you sure you want to delete <strong id="deleteProductName"></strong>?</p>
+          </div>
+          <div class="modal-footer">
+            <form method="post" id="deleteForm">
+                {% csrf_token %}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+</div>
+{% endblock %}

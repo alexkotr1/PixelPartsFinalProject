@@ -1,7 +1,4 @@
 <!-- https://coreui.io/bootstrap/docs/components/sidebar/ -->
-{% block extra_css %}
-    <link href="https://cdn.jsdelivr.net/npm/@coreui/icons@3.0.1/css/all.min.css" rel="stylesheet">
-{% endblock %}
 <div class="sidebar sidebar-dark sidebar-fixed">
   <div class="sidebar-header border-bottom">
       <div class="sidebar-brand"> PixelParts</div>
@@ -9,12 +6,12 @@
   <ul class="sidebar-nav">
     <li class="nav-title">Options</li>
     <li class="nav-item">
-      <a class="nav-link" href="#">
+      <a class="nav-link" href="{% url 'dashboard:home' %}">
         <i class="nav-icon cil-speedometer"></i> Overview
       </a>
     </li>
     <li class="nav-item">
-      <a class="nav-link" href="#">
+      <a class="nav-link" href="{% url 'dashboard:products' %}">
         <i class="nav-icon cil-devices"></i> Products
       </a>
     </li>
