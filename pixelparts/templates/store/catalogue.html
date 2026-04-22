@@ -13,9 +13,9 @@
 
             <select name="brand">
                 <option value="">All brands</option>
-                {% for brand in brands %}
-                    <option value="{{ brand }}" {% if brand == selected_brand %}selected{% endif %}>
-                        {{ brand }}
+                {% for b in brands %}
+                    <option value="{{ b }}" {% if b == brand %}selected{% endif %}>
+                        {{ b }}
                     </option>
                 {% endfor %}
             </select>
@@ -29,16 +29,29 @@
 
             <button type="submit">Search</button>
         </form>
-        <div class="filter-bar">
-            <a href="{% url 'store:catalogue' %}" class="filter-link {% if not selected_category_id %}active{% endif %}">All</a>
-            {% for category in categories %}
+         <div class="filter-bar">
+                <a href="{% url 'store:catalogue' %}" class="filter-link {% if not selected_category_id %}active{% endif %}">All</a>
+                {% for category in top_categories %}
                 <a href="{% url 'store:catalogue' %}?category={{ category.id }}"
-                   class="filter-link {% if selected_category_id == category.id %}active{% endif %}">
+                   class="filter-link {% if selected_category_id == category.id or parent_category.id == category.id %}active{% endif %}">
                     {{ category.name }}
                 </a>
-            {% endfor %}
-        </div>
-
+                {% endfor %}
+            </div>
+            {% if subcategories %}
+                <div class="filter-bar subcategory-bar">
+                    <a href="{% url 'store:catalogue' %}?category={{ parent_category.id }}"
+                       class="filter-link {% if selected_category_id == parent_category.id %}active{% endif %}">
+                        All {{ parent_category.name }}
+                    </a>
+                    {% for sub in subcategories %}
+                        <a href="{% url 'store:catalogue' %}?category={{ sub.id }}"
+                           class="filter-link {% if selected_category_id == sub.id %}active{% endif %}">
+                            {{ sub.name }}
+                        </a>
+                    {% endfor %}
+                </div>
+            {% endif %}
         {% if products %}
             <div class="product-grid">
                 {% for product in products %}

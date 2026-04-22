@@ -91,3 +91,9 @@
 .search-form button:hover {
     background-color: #0b5ed7;
 }
+
+.subcategory-bar {
+    margin-top: -10px;
+    padding-left: 12px;
+    border-left: 3px solid #0d6efd;
+}

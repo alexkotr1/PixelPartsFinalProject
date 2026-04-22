@@ -69,9 +69,6 @@ def product_edit(request, pk):
     product = get_object_or_404(Product, pk=pk)
     categories = Category.objects.all()
 
-    print(request.POST)
-    print(product.featured)
-
     if request.method == 'POST':
         product.name = request.POST['name']
         product.brand = request.POST["brand"]

@@ -49,12 +49,23 @@ def catalogue(request):
     brand = request.GET.get('brand')
     price_start = request.GET.get('price_start')
     price_end = request.GET.get('price_end')
-
+    selected_category = None
+    parent_category = None
+    subcategories = []
     products = Product.objects.all()
 
     if category_id:
         category_id = int(category_id)
-        products = products.filter(category_id=category_id)
+        selected_category = get_object_or_404(Category, pk=category_id)
+        subcategory_ids = list(Category.objects.filter(parent_id=category_id).values_list('id', flat=True))
+        products = products.filter(category_id__in=[category_id] + subcategory_ids)
+
+        if selected_category.parent:
+            subcategories = Category.objects.filter(parent=selected_category.parent)
+            parent_category = selected_category.parent
+        else:
+            subcategories = Category.objects.filter(parent_id=category_id)
+            parent_category = selected_category
 
     if brand:
         products = products.filter(brand=brand)
@@ -78,13 +89,16 @@ def catalogue(request):
 
         products = hits
 
-    categories = Category.objects.all()
+    top_categories = Category.objects.filter(parent=None)
     brands = Product.objects.values_list('brand', flat=True).distinct()
 
     return render(request, 'store/catalogue.html', {
         'products': products,
-        'categories': categories,
+        'top_categories': top_categories,
+        'subcategories': subcategories,
+        'selected_category': selected_category,
         'selected_category_id': category_id,
+        'parent_category': parent_category if category_id else None,
         'search_text': "" if (searched and searched == "") or searched is None else searched,
         'price_start': price_start,
         'price_end': price_end,

@@ -7,7 +7,7 @@
         <div class="footer-links">
             <h4>Categories</h4>
             <ul>
-                {% for category in categories %}
+                {% for category in footer_categories %}
                     <li><a href="{% url 'store:catalogue' %}?category={{ category.id }}">{{ category }}</a></li>
                 {% endfor %}
             </ul>
