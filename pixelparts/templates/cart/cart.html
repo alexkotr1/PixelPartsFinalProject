@@ -22,7 +22,7 @@
                     {% for item in items %}
                         <tr>
                             <td>
-                                <a href="{% url 'cart:product_detail' item.product.pk %}">{{ item.product.name }}</a>
+                                <a href="{% url 'store:product_detail' item.product.pk %}">{{ item.product.name }}</a>
                             </td>
                             <td>{{ item.product.price }}</td>
                             <td>{{ item.quantity }}</td>

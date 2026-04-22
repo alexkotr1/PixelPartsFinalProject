@@ -10,21 +10,31 @@
         <div class="product-image-box">
             {% if product.image %}
                 <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <img src="https://placehold.co/400x400?text=No+Image" alt="{{ product.name }}">
             {% endif %}
         </div>
         <div class="product-info">
+            <p class="category">
+                <a href="{% url 'store:catalogue' %}?category={{ product.category.pk }}">{{ product.category }}</a>
+            </p>
             <h1>{{ product.name }}</h1>
             <p class="brand">{{ product.brand }}</p>
-            <p class="category">{{ product.category }}</p>
             <p class="price">{{ product.price }}€</p>
-            <p class="stock">In stock: {{ product.stock }}</p>
+            {% if product.stock > 0 %}
+                <p class="stock">In stock: {{ product.stock }}</p>
+            {% else %}
+                <p class="out-of-stock">Out of stock</p>
+            {% endif %}
             <p class="description">{{ product.description }}</p>
+
+            {% if product.stock > 0 %}
+                <form method="post" action="{% url 'cart:add_to_cart' product.pk %}" class="add-to-cart-form">
+                    {% csrf_token %}
+                    <input type="number" name="quantity" id="id_quantity" min="1" max="{{ product.stock }}" value="1">
+                    <button type="submit">Add to Cart</button>
+                </form>
+            {% endif %}
         </div>
     </section>
-    <form method="post" action="{% url 'cart:add_to_cart' product.pk %}" class="add-to-cart-form">
-            {% csrf_token %}
-            <label for="id_quantity">Quantity</label>
-            <input type="number" name="quantity" id="id_quantity" min="1" max="{{ product.stock }}" value="1">
-            <button type="submit">Add to Cart</button>
-    </form>
 {% endblock %}

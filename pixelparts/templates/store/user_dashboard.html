@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/store/user_dashboard.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <section class="my-dashboard">
+        <h1>My Dashboard</h1>
+        <p>Welcome back, {{ user.username }}!</p>
+
+        <h2>My Purchases</h2>
+        {% if purchases %}
+            {% for purchase in purchases %}
+                <div class="purchase-card">
+                    <div class="purchase-header">
+                        <span>Order #{{ purchase.pk }}</span>
+                        <span>{{ purchase.created_at|date:"d M Y" }}</span>
+                        <span>{{ purchase.total }}€</span>
+                    </div>
+                    <ul>
+                        {% for item in purchase.purchaseitem_set.all %}
+                            <li>
+                                <a href="{% url 'store:product_detail' item.product.pk %}">{{ item.product.name }}</a>
+                                x {{ item.quantity }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endfor %}
+
+            <div class="pagination">
+                {% if purchases.has_previous %}
+                    <a href="?page={{ purchases.previous_page_number }}">Previous</a>
+                {% endif %}
+                <span>Page {{ purchases.number }} of {{ purchases.paginator.num_pages }}</span>
+                {% if purchases.has_next %}
+                    <a href="?page={{ purchases.next_page_number }}">Next</a>
+                {% endif %}
+            </div>
+        {% else %}
+            <p>You have not made any purchases yet. <a href="{% url 'store:catalogue' %}">Browse products</a></p>
+        {% endif %}
+    </section>
+{% endblock %}

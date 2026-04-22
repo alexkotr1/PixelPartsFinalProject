@@ -15,9 +15,11 @@
             {% if user.is_authenticated %}
                    {% if user.is_superuser or user.userprofile.role == 'admin' or user.userprofile.role == 'moderator'  %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'dashboard:home' %}">Dashboard</a>
+                            <a class="nav-link" href="{% url 'dashboard:home' %}">Admin Panel</a>
                         </li>
                     {% endif %}
+                <a class="nav-link" href="{% url 'cart:cart' %}">Cart</a>
+                <a class="nav-link" href="{% url 'store:user_dashboard' %}">My Dashboard</a>
                 <a class="nav-link" href="{% url 'store:profile' %}">{{ user.username }}</a>
                 <li class="nav-item">
                     <form method="post" action="{% url 'store:logout' %}">

@@ -4,6 +4,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import RegisterForm, ProfileEditForm
 from .models import Product, Category, UserProfile
+from cart.models import Purchase
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -92,8 +94,16 @@ def catalogue(request):
     top_categories = Category.objects.filter(parent=None)
     brands = Product.objects.values_list('brand', flat=True).distinct()
 
+    paginator = Paginator(products, 12)
+    page = request.GET.get('page')
+    products_page = paginator.get_page(page)
+
+    query_params = request.GET.copy()
+    query_params.pop('page', None)
+    query_string = query_params.urlencode()
+
     return render(request, 'store/catalogue.html', {
-        'products': products,
+        'products': products_page,
         'top_categories': top_categories,
         'subcategories': subcategories,
         'selected_category': selected_category,
@@ -104,6 +114,7 @@ def catalogue(request):
         'price_end': price_end,
         'brand': brand,
         'brands': brands,
+        'query_string': query_string,
 
     })
 
@@ -127,6 +138,13 @@ def profile(request):
 
     return render(request, 'store/profile.html', {'form': form, 'user_profile': user_profile})
 
+@login_required
+def user_dashboard(request):
+    purchase_list = Purchase.objects.filter(user=request.user).order_by('-created_at')
+    paginator = Paginator(purchase_list, 5)
+    page = request.GET.get('page')
+    purchases = paginator.get_page(page)
+    return render(request, 'store/user_dashboard.html', {'purchases': purchases})
 
 
 

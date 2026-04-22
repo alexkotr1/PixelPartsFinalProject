@@ -7,38 +7,46 @@
 
 {% block content %}
     <section class="hero">
-        <h1>Welcome to PixelParts</h1>
+        <div class="hero-content">
+            <h1>Welcome to PixelParts</h1>
+            <p>Your only shop for PC components</p>
+            <a href="{% url 'store:catalogue' %}" class="hero-btn">Shop Now</a>
+        </div>
     </section>
-    <section class="container categories">
-        <h2>Categories</h2>
+
+    <section class="home-section">
+        <h2>Browse Categories</h2>
         <div class="home-grid">
-        {% for category in categories %}
-            <a class="home-card category" href="{% url 'store:catalogue' %}?category={{ category.id }}">
-                {% if category.bootstrap_icon_code %}
-                    <i class="{{ category.bootstrap_icon_code}}"></i>
-                {% else %}
-                    <i class="bi bi-box-seam"></i>
-                {% endif %}
-                <p class="home-card-subtitle-2">{{ category }}</p>
-            </a>
-        {% endfor %}
-       </div>
+            {% for category in categories %}
+                <a class="home-card category" href="{% url 'store:catalogue' %}?category={{ category.id }}">
+                    {% if category.bootstrap_icon_code %}
+                        <i class="{{ category.bootstrap_icon_code }}"></i>
+                    {% else %}
+                        <i class="bi bi-box-seam"></i>
+                    {% endif %}
+                    <p class="home-card-subtitle-2">{{ category }}</p>
+                </a>
+            {% endfor %}
+        </div>
     </section>
-    <section class="container featured">
+
+    {% if featured %}
+    <section class="home-section">
         <h2>Featured Products</h2>
-        {% if featured  %}
-            <div class="home-grid">
-                {% for product in featured %}
-                    <a class="home-card" href="{% url 'store:product_detail' product.pk %}">
-                        {% if product.image %}
-                            <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
-                        {% endif %}
-                        <h3>{{ product.name }}</h3>
-                        <p class="home-card-subtitle">{{ product.brand }}</p>
-                        <p class="home-card-subtitle-2">{{ product.price }}€</p>
-                    </a>
-                {% endfor %}
-            </div>
-        {% endif %}
+        <div class="home-grid">
+            {% for product in featured %}
+                <a class="home-card" href="{% url 'store:product_detail' product.pk %}">
+                    {% if product.image %}
+                        <img class="product-image" src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        <img class="product-image" src="https://placehold.co/200x140?text=No+Image" alt="{{ product.name }}">
+                    {% endif %}
+                    <h3>{{ product.name }}</h3>
+                    <p class="home-card-subtitle">{{ product.brand }}</p>
+                    <p class="home-card-subtitle-2">{{ product.price }}€</p>
+                </a>
+            {% endfor %}
+        </div>
     </section>
+    {% endif %}
 {% endblock %}

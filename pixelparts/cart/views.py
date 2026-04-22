@@ -17,7 +17,7 @@ def add_to_cart(request, pk):
     else:
         cart[key] = quantity
     request.session['cart'] = cart
-    return redirect('store:cart')
+    return redirect('cart:cart')
 
 def view_cart(request):
     if not request.user.is_authenticated:
@@ -44,7 +44,7 @@ def remove_from_cart(request, pk):
     if key in cart:
         del cart[key]
         request.session['cart'] = cart
-    return redirect('store:cart')
+    return redirect('cart:cart')
 
 def checkout(request):
     if not request.user.is_authenticated:
@@ -52,7 +52,7 @@ def checkout(request):
 
     cart = request.session['cart']
     if not cart:
-        return redirect('store:cart')
+        return redirect('cart:cart')
     total = 0
     items_to_save = []
     for product_id in cart:
