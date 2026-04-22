@@ -18,6 +18,7 @@
             <tr>
                 <th>Name</th>
                 <th>Brand</th>
+                <th>Category</th>
                 <th>Price</th>
                 <th>Stock</th>
                 <th>Actions</th>
@@ -32,7 +33,7 @@
                     <td>{{ product.price }}</td>
                     <td>{{ product.stock }}</td>
                     <td>
-                        <a href="">Edit</a>
+                        <a href="{% url 'dashboard:product_edit' product.pk%}">Edit</a>
                         <button type="button"
                             data-bs-toggle="modal"
                             data-bs-target="#deleteModal"

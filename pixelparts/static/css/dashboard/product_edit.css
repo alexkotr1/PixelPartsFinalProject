@@ -1,0 +1,40 @@
+.dashboard-content form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 500px;
+}
+
+.dashboard-content label {
+    margin-top: 8px;
+    font-weight: 600;
+}
+
+.dashboard-content input[type="text"],
+.dashboard-content input[type="number"],
+.dashboard-content select,
+.dashboard-content textarea {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.dashboard-content textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+.current-image {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.dashboard-content button {
+    margin-top: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+}

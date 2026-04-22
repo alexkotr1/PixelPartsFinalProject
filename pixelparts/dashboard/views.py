@@ -6,7 +6,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from cart.models import Purchase
-from store.models import Product
+from store.models import Product, Category
 
 # Create your views here.
 
@@ -54,3 +54,36 @@ def product_delete(request, pk):
     if request.method == 'POST':
         product.delete()
     return redirect('dashboard:products')
+
+def product_edit(request, pk):
+    if admin_check(request) is False:
+        return redirect('store:home')
+
+    product = get_object_or_404(Product, pk=pk)
+    categories = Category.objects.all()
+
+    print(request.POST)
+    print(product.featured)
+
+    if request.method == 'POST':
+        product.name = request.POST['name']
+        product.brand = request.POST["brand"]
+        product.price = request.POST['price']
+        product.stock = request.POST['stock']
+        product.description = request.POST['description']
+        product.category = get_object_or_404(Category, pk=request.POST['category'])
+        product.featured = 'featured' in request.POST
+        product.save()
+        if 'delete_image' in request.POST:
+            product.image.delete(save=False)
+            product.image = None
+
+        if 'image' in request.FILES:
+            if 'delete_image' not in request.POST: product.image.delete(save=False)
+            product.image = request.FILES['image']
+        product.save()
+        return redirect('dashboard:products')
+    return render(request, 'dashboard/product_edit.html', {
+        'product': product,
+        'categories': categories
+    })
