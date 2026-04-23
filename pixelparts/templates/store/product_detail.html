@@ -27,7 +27,7 @@
                 <p class="out-of-stock">Out of stock</p>
             {% endif %}
             <p class="description">{{ product.description }}</p>
-
+            {% include 'partials/rating.html' with product=product %}
             {% if product.stock > 0 %}
                 <form method="post" action="{% url 'cart:add_to_cart' product.pk %}" class="add-to-cart-form">
                     {% csrf_token %}

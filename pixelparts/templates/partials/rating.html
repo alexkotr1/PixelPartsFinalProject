@@ -1,0 +1,36 @@
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/rating.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/rating.js' %}"></script>
+{% endblock %}
+
+
+<div class="rating-block">
+    <div class="rating-summary">
+        <span class="rating-average">{{ average }}</span>
+        {% if count == 1 %}
+        <span class="rating-count">{{ count }} rating</span>
+        {% else %}
+        <span class="rating-count">{{ count }} ratings</span>
+        {% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+        <form>{% csrf_token %}</form>
+        <div class="rating-input" data-product-id="{{ product.pk }}" data-user-rating="{{ user_rating }}">
+            <span class="star bi bi-star" data-value="1"></span>
+            <span class="star bi bi-star" data-value="2"></span>
+            <span class="star bi bi-star" data-value="3"></span>
+            <span class="star bi bi-star" data-value="4"></span>
+            <span class="star bi bi-star" data-value="5"></span>
+        </div>
+    {% else %}
+        <p class="rating-login">
+            <a href="{% url 'store:login' %}">Log in</a> to rate this product.
+        </p>
+    {% endif %}
+</div>

@@ -15,4 +15,5 @@ urlpatterns = [
     path('catalogue', views.catalogue, name='catalogue'),
     path('profile/', views.profile, name='profile'),
     path('user_dashboard', views.user_dashboard, name='user_dashboard'),
+    path('product/<int:pk>/rate/', views.rate_product, name='rate_product'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

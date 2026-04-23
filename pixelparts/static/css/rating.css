@@ -1,0 +1,44 @@
+.rating-block {
+    margin: 20px 0;
+    padding: 16px;
+    background-color: #fafafa;
+    border-radius: 6px;
+}
+
+.rating-summary {
+    margin-bottom: 8px;
+}
+
+.rating-average {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #f5a623;
+    margin-right: 6px;
+}
+
+.rating-count {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.rating-input {
+    font-size: 1.6rem;
+    color: #f5a623;
+    cursor: pointer;
+    user-select: none;
+}
+
+.rating-input .star {
+    margin-right: 2px;
+    transition: transform 0.1s;
+}
+
+.rating-input .star:hover {
+    transform: scale(1.15);
+}
+
+.rating-login {
+    color: #666;
+    font-size: 0.9rem;
+    margin: 0;
+}

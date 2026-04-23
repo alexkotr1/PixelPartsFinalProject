@@ -1,9 +1,10 @@
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
 from .forms import RegisterForm, ProfileEditForm
-from .models import Product, Category, UserProfile
+from .models import Product, Category, UserProfile, Rating
 from cart.models import Purchase
 from django.core.paginator import Paginator
 
@@ -22,7 +23,49 @@ def home(request):
 
 def product_detail(request, pk):
     product = get_object_or_404(Product, pk=pk)
-    return render(request, 'store/product_detail.html', {'product': product})
+    ratings = Rating.objects.filter(product=product)
+    user_rating = 0
+    total = 0
+    for r in ratings:
+        total += r.rating
+        if request.user.is_authenticated and r.user_id == request.user.id:
+            user_rating = r.rating
+    count = ratings.count()
+    avg = total / count if count > 0 else 0
+    return render(request, 'store/product_detail.html', {
+        'product': product,
+        'average': int(round(avg, 1)),
+        'count': count,
+        'user_rating': int(user_rating),
+    })
+
+@login_required
+def rate_product(request, pk):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=400)
+    product = get_object_or_404(Product, pk=pk)
+    value = int(request.POST.get('rating'))
+    if value not in range(1, 6):
+        return JsonResponse({'error': 'Invalid rating'}, status=400)
+    rating,created = Rating.objects.get_or_create(product=product, user=request.user,defaults={'rating': value})
+    if not created:
+        rating.rating = value
+        rating.save()
+    sum = 0
+    ratings = Rating.objects.filter(product=product)
+    for rating2 in ratings:
+        sum += rating2.rating
+    avg = sum / ratings.count() if ratings.count() > 0 else 0
+    print(round(avg,1),ratings.count(),int(value))
+    return JsonResponse({
+        'average':int(round(avg,1)),
+        'count':ratings.count(),
+        'user_rating':int(value),
+    })
+
+
+
+
 
 def register(request):
     if request.method == 'POST':
