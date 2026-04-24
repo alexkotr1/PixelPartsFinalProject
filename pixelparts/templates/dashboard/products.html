@@ -7,6 +7,7 @@
 
 {% block extra_js %}
     <script src="{% static 'js/dashboard/crud.js' %}" defer></script>
+    <script src="{% static 'js/dashboard/bulkImport.js' %}" defer></script>
 {% endblock %}
 
 {% block content %}
@@ -14,6 +15,8 @@
     <section class="dashboard-content">
         <h2>Products</h2>
         <a href="{% url 'dashboard:product_create' %}">Create</a>
+        <a id="bulkImport">Import Products</a>
+        <input type="file" id="importFile" accept=".json" style="display:none">
         <table class="dashboard-table">
             <thead>
             <tr>
@@ -23,6 +26,7 @@
                 <th>Price</th>
                 <th>Stock</th>
                 <th>Actions</th>
+                <th>Featured</th>
             </tr>
             </thead>
             <tbody>
@@ -33,6 +37,7 @@
                     <td>{{ product.category }}</td>
                     <td>{{ product.price }}</td>
                     <td>{{ product.stock }}</td>
+                    <td>{{ product.featured }}</td>
                     <td>
                         <a href="{% url 'dashboard:product_edit' product.pk%}">Edit</a>
                         <button type="button"
