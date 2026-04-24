@@ -20,4 +20,6 @@ urlpatterns = [
     path('user_delete:<int:pk>/', views.user_delete, name='user_delete'),
     path('user_demote:<int:pk>/', views.user_demote, name='user_demote'),
 
+    path('bulk_import/', views.bulk_import, name='bulk_import'),
+
 ]
