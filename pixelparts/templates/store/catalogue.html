@@ -20,8 +20,8 @@
                 {% endfor %}
             </select>
 
-            <input type="number" name="price_start" value="{{ price_start }}" placeholder="Min price" min="0">
-            <input type="number" name="price_end" value="{{ price_end }}" placeholder="Max price" min="0">
+            <input type="number" name="price_start" value="{{ price_start|default_if_none:'' }}" placeholder="Min price" min="0">
+            <input type="number" name="price_end" value="{{ price_end|default_if_none:'' }}" placeholder="Max price" min="0">
 
             {% if selected_category_id %}
                 <input type="hidden" name="category" value="{{ selected_category_id }}">
