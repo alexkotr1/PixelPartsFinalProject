@@ -2,12 +2,14 @@ from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 
 from cart.models import Purchase
 from store.models import Product, Category
 
+import json
 # Create your views here.
 
 
@@ -239,25 +241,10 @@ def product_create(request):
 
     categories = Category.objects.all()
     if request.method == 'POST':
+        validate_product(request)
+
+
         try:
-            name = request.POST.get('name','').strip()[:50]
-            brand = request.POST.get('brand','').strip()[:50]
-            price = float(request.POST.get('price',0))
-            stock = int(request.POST.get('stock',0))
-            category_id = request.POST.get('category')
-            if not name or not brand or price < 0 or stock < 0 or not category_id:
-                return render(request, 'dashboard/product_edit.html', {'categories': categories, 'error': 'Invalid input'})
-            product = Product()
-            product.name = name
-            product.brand = brand
-            product.price = price
-            product.stock = stock
-            product.description = request.POST.get('description','').strip()[:2000]
-            product.category = get_object_or_404(Category, pk=category_id)
-            product.featured = 'featured' in request.POST
-            if 'image' in request.FILES:
-                product.image = request.FILES['image']
-            product.save()
             return redirect('dashboard:products')
         except (ValueError, TypeError):
             return render(request, 'dashboard/product_edit.html', {'categories': categories, 'error': 'Invalid input'})
@@ -283,3 +270,57 @@ def category_create(request):
 
     return render(request, 'dashboard/category_edit.html', {'category': None, 'categories': all_categories})
 
+
+def bulk_import(request):
+    res = admin_check(request)
+    if res:
+        return res
+
+    if request.method == "POST":
+        import_file = request.FILES.get("file")
+        if import_file is None:
+            return JsonResponse({"error": "no file"})
+        try:
+            data = json.load(import_file)
+            for item in data:
+                name = item.get('name')
+                brand = item.get('brand')
+                price = item.get('price')
+                stock = item.get('stock')
+                category_id = item.get('category')
+                product = Product()
+                product.name = name
+                product.brand = brand
+                product.price = price
+                product.stock = stock
+                product.category_id = category_id
+                print(product)
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "invalid json"})
+    return redirect('dashboard:products')
+
+def validate_product(request):
+    try:
+        name = request.POST.get('name','').strip()[:50]
+        brand = request.POST.get('brand',"").strip()[:50]
+        price = float(request.POST.get('price',0))
+        stock = int(request.POST.get('stock',0))
+        description = request.POST.get('description').strip()[:2000]
+        category_id = request.POST.get("category")
+        if not name or not brand or price < 0 or stock < 0 or not category_id:
+            return False
+    except (ValueError, TypeError):
+        return False
+    product = Product()
+    product.name = name
+    product.brand = brand
+    product.price = price
+    product.stock = stock
+    product.description = description
+    product.category_id = Category.objects.get(pk=category_id)
+    product.featured = 'featured' in request.POST
+    if 'image' in request.FILES:
+        product.image = request.FILES['image']
+    product.save()
+    return True
