@@ -51,7 +51,8 @@ def remove_from_cart(request, pk):
 def checkout(request):
     if not request.user.is_authenticated:
         return redirect('store:login')
-
+    if request.method != 'POST':
+        return redirect('cart:view_cart')
     cart = request.session.get('cart', {})
     if not cart:
         return redirect('cart:cart')
@@ -60,6 +61,14 @@ def checkout(request):
     for product_id in cart:
         quantity = cart[product_id]
         product = Product.objects.filter(pk=product_id).first()
+        if not product or product.stock < quantity:
+            return redirect('cart:view_cart')
+        product.stock -= quantity
+        try:
+            product.save()
+        except Exception as e:
+            print(f"Error saving product {product.name}: {e}")
+            return redirect('cart:view_cart')
         if product:
             subtotal = product.price * quantity
             total += subtotal

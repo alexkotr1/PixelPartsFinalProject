@@ -12,8 +12,8 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(template_name='store/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('register/', views.register, name='register'),
-    path('catalogue', views.catalogue, name='catalogue'),
+    path('catalogue/', views.catalogue, name='catalogue'),
     path('profile/', views.profile, name='profile'),
-    path('user_dashboard', views.user_dashboard, name='user_dashboard'),
+    path('user_dashboard/', views.user_dashboard, name='user_dashboard'),
     path('product/<int:pk>/rate/', views.rate_product, name='rate_product'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -34,7 +34,7 @@ def product_detail(request, pk):
     avg = total / count if count > 0 else 0
     return render(request, 'store/product_detail.html', {
         'product': product,
-        'average': int(round(avg, 1)),
+        'average': round(avg, 1) if avg else 0,
         'count': count,
         'user_rating': int(user_rating),
     })
@@ -61,9 +61,8 @@ def rate_product(request, pk):
     for rating2 in ratings:
         sum += rating2.rating
     avg = sum / ratings.count() if ratings.count() > 0 else 0
-    print(round(avg,1),ratings.count(),int(value))
     return JsonResponse({
-        'average':int(round(avg,1)),
+        'average':round(avg,1) if avg else 0,
         'count':ratings.count(),
         'user_rating':int(value),
     })
