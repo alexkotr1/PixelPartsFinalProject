@@ -8,14 +8,16 @@ from cart.models import Purchase, PurchaseItem
 def add_to_cart(request, pk):
     if not request.user.is_authenticated:
         return redirect('store:login')
-
+    product = get_object_or_404(Product, pk=pk)
+    try:
+        quantity = int(request.POST.get('quantity'))
+    except (ValueError, TypeError):
+        return redirect('store:product_detail', pk=pk)
+    if quantity < 1 or quantity > product.stock:
+        return redirect('store:product_detail', pk=pk)
     cart = request.session.get('cart', {})
-    quantity = int(request.POST.get('quantity'))
     key = str(pk)
-    if key in cart:
-        cart[key] = cart[key] + quantity
-    else:
-        cart[key] = quantity
+    cart[key] = cart.get(key, 0) + quantity
     request.session['cart'] = cart
     return redirect('cart:cart')
 
@@ -50,13 +52,12 @@ def checkout(request):
     if not request.user.is_authenticated:
         return redirect('store:login')
 
-    cart = request.session['cart']
+    cart = request.session.get('cart', {})
     if not cart:
         return redirect('cart:cart')
     total = 0
     items_to_save = []
     for product_id in cart:
-        print(product_id)
         quantity = cart[product_id]
         product = Product.objects.filter(pk=product_id).first()
         if product:

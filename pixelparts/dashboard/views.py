@@ -70,23 +70,44 @@ def product_edit(request, pk):
     categories = Category.objects.all()
 
     if request.method == 'POST':
-        product.name = request.POST['name']
-        product.brand = request.POST["brand"]
-        product.price = request.POST['price']
-        product.stock = request.POST['stock']
-        product.description = request.POST['description']
-        product.category = get_object_or_404(Category, pk=request.POST['category'])
-        product.featured = 'featured' in request.POST
-        product.save()
-        if 'delete_image' in request.POST:
-            product.image.delete(save=False)
-            product.image = None
+        try:
+            name = request.POST.get('name','').strip()[:50]
+            brand = request.POST.get('brand','').strip()[:50]
+            price = float(request.POST.get('price',0))
+            stock = int(request.POST.get('stock',0))
+            category_id = request.POST.get('category')
 
-        if 'image' in request.FILES:
-            if 'delete_image' not in request.POST: product.image.delete(save=False)
-            product.image = request.FILES['image']
-        product.save()
-        return redirect('dashboard:products')
+            if not name or not brand or price < 0 or stock < 0 or not category_id:
+                return render(request, 'dashboard/product_edit.html', {
+                    'product': product,
+                    'categories': categories,
+                    'error': 'Invalid input'
+                })
+
+
+            product.name = name
+            product.brand = brand
+            product.price = price
+            product.stock = stock
+            product.description = request.POST.get('description','').strip()[:2000]
+            product.category = get_object_or_404(Category, pk=category_id)
+            product.featured = 'featured' in request.POST
+            product.save()
+            if 'delete_image' in request.POST:
+                product.image.delete(save=False)
+                product.image = None
+
+            if 'image' in request.FILES:
+                if 'delete_image' not in request.POST: product.image.delete(save=False)
+                product.image = request.FILES['image']
+            product.save()
+            return redirect('dashboard:products')
+        except (ValueError, TypeError):
+            return render(request, 'dashboard/product_edit.html', {
+                'product': product,
+                'categories': categories,
+                'error': 'Invalid input'
+            })
     return render(request, 'dashboard/product_edit.html', {
         'product': product,
         'categories': categories
@@ -122,11 +143,30 @@ def category_edit(request, pk):
     all_categories = Category.objects.exclude(pk=pk)
 
     if request.method == 'POST':
-        category.name = request.POST['name']
-        category.bootstrap_icon_code = request.POST['bootstrap_icon_code']
+        name = request.POST.get('name','').strip()[:50]
+        icon = request.POST.get('bootstrap_icon_code','').strip()[:50]
+
+        if not name:
+            return render(request, 'dashboard/category_edit.html', {
+                'category': category,
+                'all_categories': all_categories,
+                'error': 'Name is required'
+            })
+        category.name = name
+        category.bootstrap_icon_code = icon
         parent_id = request.POST.get('parent')
         if parent_id:
-            category.parent = get_object_or_404(Category, pk=parent_id)
+            try:
+                parent = get_object_or_404(Category, pk=parent_id)
+                if parent.pk == category.pk:
+                    return render(request, 'dashboard/category_edit.html', {
+                        'category': category,
+                        'all_categories': all_categories,
+                        'error': 'A category cannot be a parent of itself'
+                    })
+                category.parent = parent
+            except (ValueError, TypeError):
+                category.parent = None
         else:
             category.parent = None
         category.save()
@@ -199,18 +239,28 @@ def product_create(request):
 
     categories = Category.objects.all()
     if request.method == 'POST':
-        product = Product()
-        product.name = request.POST['name']
-        product.brand = request.POST['brand']
-        product.price = request.POST['price']
-        product.stock = request.POST['stock']
-        product.description = request.POST['description']
-        product.category = get_object_or_404(Category, pk=request.POST['category'])
-        product.featured = 'featured' in request.POST
-        if 'image' in request.FILES:
-            product.image = request.FILES['image']
-        product.save()
-        return redirect('dashboard:products')
+        try:
+            name = request.POST.get('name','').strip()[:50]
+            brand = request.POST.get('brand','').strip()[:50]
+            price = float(request.POST.get('price',0))
+            stock = int(request.POST.get('stock',0))
+            category_id = request.POST.get('category')
+            if not name or not brand or price < 0 or stock < 0 or not category_id:
+                return render(request, 'dashboard/product_edit.html', {'categories': categories, 'error': 'Invalid input'})
+            product = Product()
+            product.name = name
+            product.brand = brand
+            product.price = price
+            product.stock = stock
+            product.description = request.POST.get('description','').strip()[:2000]
+            product.category = get_object_or_404(Category, pk=category_id)
+            product.featured = 'featured' in request.POST
+            if 'image' in request.FILES:
+                product.image = request.FILES['image']
+            product.save()
+            return redirect('dashboard:products')
+        except (ValueError, TypeError):
+            return render(request, 'dashboard/product_edit.html', {'categories': categories, 'error': 'Invalid input'})
 
     return render(request, 'dashboard/product_edit.html', {'product': None, 'categories': categories})
 

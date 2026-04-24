@@ -13,10 +13,10 @@
             {% csrf_token %}
 
             <label for="id_name">Name</label>
-            <input type="text" name="name" id="id_name" value="{{ product.name|default:'' }}" required>
+            <input type="text" name="name" id="id_name" value="{{ product.name|default:'' }}" maxlength="50" required>
 
             <label for="id_brand">Brand</label>
-            <input type="text" name="brand" id="id_brand" value="{{ product.brand|default:'' }}" required>
+            <input type="text" name="brand" id="id_brand" value="{{ product.brand|default:'' }}" maxlength="50" required>
 
             <label for="id_category">Category</label>
             <select name="category" id="id_category">
@@ -26,10 +26,10 @@
             </select>
 
             <label for="id_price">Price</label>
-            <input type="number" name="price" id="id_price" value="{{ product.price|default:'' }}" step="1.00" required>
+            <input type="number" name="price" id="id_price" value="{{ product.price|default:'' }}" min="0" step="0.01" required>
 
             <label for="id_stock">Stock</label>
-            <input type="number" name="stock" id="id_stock" value="{{ product.stock|default:'' }}" required>
+            <input type="number" name="stock" id="id_stock" value="{{ product.stock|default:'' }}" min="0" required>
 
             <label for="id_description">Description</label>
             <textarea name="description" id="id_description">{{ product.description|default:'' }}</textarea>

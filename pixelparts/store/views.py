@@ -44,7 +44,12 @@ def rate_product(request, pk):
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=400)
     product = get_object_or_404(Product, pk=pk)
-    value = int(request.POST.get('rating'))
+    try :
+        value = int(request.POST.get('rating'))
+    except (ValueError, TypeError):
+        return JsonResponse(
+            {'error': 'Invalid rating value'}, status=400
+        )
     if value not in range(1, 6):
         return JsonResponse({'error': 'Invalid rating'}, status=400)
     rating,created = Rating.objects.get_or_create(product=product, user=request.user,defaults={'rating': value})
