@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .models import UserProfile
 
 class RegisterForm(UserCreationForm):
+    #Extra fields not saved in the built in user model, collected and saved in UserProfile
     email = forms.EmailField(required=True, max_length=50)
     first_name = forms.CharField(required=True, max_length=50)
     last_name = forms.CharField(required=True, max_length=50)
@@ -16,6 +17,7 @@ class RegisterForm(UserCreationForm):
 
     class Meta:
         model = User
+        # password1 and password2 are provided by UserCreationForm automatically
         fields = ['username', 'email', 'first_name', 'last_name', 'password1', 'password2']
 
 class ProfileEditForm(forms.ModelForm):

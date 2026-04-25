@@ -9,10 +9,12 @@ def add_to_cart(request, pk):
     if not request.user.is_authenticated:
         return redirect('store:login')
     product = get_object_or_404(Product, pk=pk)
+    #check if quantity is parseable to int, return redirect if its not
     try:
         quantity = int(request.POST.get('quantity'))
     except (ValueError, TypeError):
         return redirect('store:product_detail', pk=pk)
+    #check if item is in stock, return redirect if its not
     if quantity < 1 or quantity > product.stock:
         return redirect('store:product_detail', pk=pk)
     cart = request.session.get('cart', {})
@@ -31,7 +33,7 @@ def view_cart(request):
     for product_id in cart:
         quantity = cart[product_id]
         product = Product.objects.filter(pk=product_id).first()
-        if product:
+        if product: #skip if product is deleted
             subtotal = product.price * quantity
             total += subtotal
             items.append({'product': product, 'quantity': quantity, 'subtotal': subtotal})
@@ -52,12 +54,13 @@ def checkout(request):
     if not request.user.is_authenticated:
         return redirect('store:login')
     if request.method != 'POST':
-        return redirect('cart:view_cart')
+        return redirect('cart:cart')
     cart = request.session.get('cart', {})
     if not cart:
         return redirect('cart:cart')
     total = 0
     items_to_save = []
+    #loop over the products in cart, decrement stock and save to purchase
     for product_id in cart:
         quantity = cart[product_id]
         product = Product.objects.filter(pk=product_id).first()

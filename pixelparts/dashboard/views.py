@@ -18,8 +18,7 @@ import json
 def overview(request):
     res = admin_check(request)
     if res:
-        return res
-
+        return res #redirect if user is not staff
     last_month = timezone.now() - timedelta(days=30)
 
     return render(request, 'dashboard/overview.html', {
@@ -34,7 +33,7 @@ def products(request):
     res = admin_check(request)
     if res:
         return res
-
+    #featured products first and then alphabetically
     product_list = Product.objects.order_by('-featured','name') #- is descending order so true goes first
     paginator = Paginator(product_list, 10)
     page = request.GET.get('page')
@@ -43,6 +42,7 @@ def products(request):
 
 
 def admin_check(request):
+    """Shared guard used by all admin views. Redirects to login if not logged in or not staff"""
     if not request.user.is_authenticated:
         return redirect('store:login')
     if not request.user.is_superuser and get_role(request.user) not in ('admin', 'moderator'):
@@ -50,6 +50,7 @@ def admin_check(request):
     return None
 
 def product_delete(request, pk):
+    """Delete products from POST requests, redirect to dashboard if GET"""
     res = admin_check(request)
     if res:
         return res
@@ -60,6 +61,7 @@ def product_delete(request, pk):
     return redirect('dashboard:products')
 
 def product_edit(request, pk):
+    """Check if the user is staff and if its a POST request and then validate and save the product"""
     res = admin_check(request)
     if res:
         return res
@@ -82,6 +84,7 @@ def product_edit(request, pk):
     })
 
 def categories(request):
+    """Get all categories and paginate them"""
     res = admin_check(request)
     if res:
         return res
@@ -93,6 +96,7 @@ def categories(request):
     return render(request, 'dashboard/categories.html', {'categories': categories_page})
 
 def category_delete(request, pk):
+    """Delete categories from POST requests, redirect to dashboard if GET"""
     res = admin_check(request)
     if res:
         return res
@@ -103,6 +107,7 @@ def category_delete(request, pk):
     return redirect('dashboard:categories')
 
 def category_edit(request, pk):
+    """Check if the user is staff and if its a POST request and then validate and save the category"""
     res = admin_check(request)
     if res:
         return res
@@ -126,7 +131,7 @@ def category_edit(request, pk):
         if parent_id:
             try:
                 parent = get_object_or_404(Category, pk=parent_id)
-                if parent.pk == category.pk:
+                if parent.pk == category.pk: #check if parent is the same as the category
                     return render(request, 'dashboard/category_edit.html', {
                         'category': category,
                         'categories': categories,
@@ -147,6 +152,7 @@ def category_edit(request, pk):
 
 
 def users(request):
+    """Function for the user management page, available only to admins and superusers"""
     res = admin_check(request)
     if res:
         return res
@@ -165,6 +171,7 @@ def users(request):
 
 
 def user_promote(request, pk):
+    """Promote a user to moderator, available only to admins and superusers"""
     res = admin_check(request)
     if res:
         return res
@@ -178,6 +185,7 @@ def user_promote(request, pk):
     return redirect('dashboard:users')
 
 def user_delete(request, pk):
+    """Delete users function, available only to admins and superusers, redirects to users page if GET"""
     res = admin_check(request)
     if res:
         return res
@@ -192,6 +200,7 @@ def user_delete(request, pk):
 
 
 def user_demote(request, pk):
+    """Demote moderators to User, available only to admins and superusers"""
     res = admin_check(request)
     if res:
         return res
@@ -205,6 +214,7 @@ def user_demote(request, pk):
     return redirect('dashboard:users')
 
 def product_create(request):
+    """Fetch product from the POST request, validate and save it"""
     res = admin_check(request)
     if res:
         return res
@@ -227,6 +237,7 @@ def product_create(request):
 
 
 def category_create(request):
+    """Fetch category from the POST request, validate and save it"""
     res = admin_check(request)
     if res:
         return res
@@ -257,6 +268,7 @@ def category_create(request):
 
 
 def bulk_import(request):
+    """Bulk import function to import products from a json file"""
     res = admin_check(request)
     if res:
         return res
@@ -289,6 +301,9 @@ def bulk_import(request):
     return JsonResponse({"success": True})
 
 def validate_product(request, pk, name_=None, brand_=None, price_=None, stock_=None, description_=None, category_id_=None,featured_=None):
+    """Shared product validation, used by multiple functions. When called from bulk_import, request and pk is None and all data_ params are
+    provided. When called from a form view, request has POST and FILES and pk is added when the product should be edited. Returns (true,product) on success
+    false,none on validation failure"""
     product = None
     if pk:
          product = get_object_or_404(Product, pk=pk)
@@ -328,5 +343,6 @@ def validate_product(request, pk, name_=None, brand_=None, price_=None, stock_=N
 
 
 def get_role(user):
+    """Shared function to get the role of a user, so everytime we fetch the profile we make sure there is one"""
     userprofile, created = UserProfile.objects.get_or_create(user=user)
     return userprofile.role

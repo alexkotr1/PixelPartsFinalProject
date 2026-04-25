@@ -13,7 +13,8 @@ from django.core.paginator import Paginator
 
 
 def home(request):
-    featured = Product.objects.all().filter(featured=True)[:4]
+    #only show featured products that have an image
+    featured = Product.objects.all().filter(featured=True)[:4] #first 4 products
     featured_with_images = []
     for product in featured:
         if product.image:
@@ -22,8 +23,9 @@ def home(request):
 
 
 def product_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
+    product = get_object_or_404(Product, pk=pk) #404 if product doesnt exist
     ratings = Rating.objects.filter(product=product)
+    #compute average and find the logged in users rating
     user_rating = 0
     total = 0
     for r in ratings:
@@ -36,10 +38,10 @@ def product_detail(request, pk):
         'product': product,
         'average': round(avg, 1) if avg else 0,
         'count': count,
-        'user_rating': int(user_rating),
+        'user_rating': int(user_rating), #passed to rating.js to pre fill starts
     })
 
-@login_required
+@login_required #redirect to /login if not logged in
 def rate_product(request, pk):
     if request.method != 'POST':
         return JsonResponse({'error': 'Method not allowed'}, status=400)
@@ -50,10 +52,12 @@ def rate_product(request, pk):
         return JsonResponse(
             {'error': 'Invalid rating value'}, status=400
         )
-    if value not in range(1, 6):
+    if value not in range(1, 6): #enforce 1-5 rating
         return JsonResponse({'error': 'Invalid rating'}, status=400)
+    #create a rating if one doesnt exist, fetch it if it does
     rating,created = Rating.objects.get_or_create(product=product, user=request.user,defaults={'rating': value})
     if not created:
+        # update existing rating
         rating.rating = value
         rating.save()
     sum = 0
@@ -73,7 +77,7 @@ def rate_product(request, pk):
 
 def register(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST, request.FILES)
+        form = RegisterForm(request.POST, request.FILES) # request.FILES for avatar upload
         if form.is_valid():
             user = form.save()
             UserProfile.objects.create(user=user,
@@ -83,9 +87,9 @@ def register(request):
                                        address=form.cleaned_data.get('address', ''),
                                        city=form.cleaned_data.get('city', ''),
                                        country=form.cleaned_data.get('country', ''),
-            )
-            user.save()
-            login(request, user)
+            ) #create a user profile for the user
+            user.save() #save the user
+            login(request, user) #log them in
             return redirect('store:home')
     else:
         form = RegisterForm()
@@ -93,6 +97,7 @@ def register(request):
 
 
 def catalogue(request):
+    # collect all filters from the query string
     category_id = request.GET.get('category')
     searched = request.GET.get('search_text')
     brand = request.GET.get('brand')
@@ -103,12 +108,18 @@ def catalogue(request):
     subcategories = []
     products = Product.objects.all()
 
+    # parse category_id as int, if nto parseable, redirect to catalogue page
     if category_id:
-        category_id = int(category_id)
+        try:
+            category_id = int(category_id)
+        except ValueError:
+            return redirect('store:catalogue')
         selected_category = get_object_or_404(Category, pk=category_id)
+        #include products from category and subcategories
         subcategory_ids = list(Category.objects.filter(parent_id=category_id).values_list('id', flat=True))
         products = products.filter(category_id__in=[category_id] + subcategory_ids)
 
+        # selected_category for the sidebar
         if selected_category.parent:
             subcategories = Category.objects.filter(parent=selected_category.parent)
             parent_category = selected_category.parent
@@ -116,6 +127,7 @@ def catalogue(request):
             subcategories = Category.objects.filter(parent_id=category_id)
             parent_category = selected_category
 
+    #add further filters if existent
     if brand:
         products = products.filter(brand=brand)
 
@@ -124,6 +136,7 @@ def catalogue(request):
     if price_end:
         products = products.filter(price__lte=price_end)
 
+    #split search terms and search every product for each term
     if searched:
         hits = []
         for product in products:
@@ -145,6 +158,7 @@ def catalogue(request):
     page = request.GET.get('page')
     products_page = paginator.get_page(page)
 
+    #build query string for pagination without page so pagination links keep other filters
     query_params = request.GET.copy()
     query_params.pop('page', None)
     query_string = query_params.urlencode()
@@ -168,26 +182,30 @@ def catalogue(request):
 @login_required
 def profile(request):
     user = request.user
+    #make sure a user profile exists for the user
     user_profile,created = UserProfile.objects.get_or_create(user=user)
     if request.method == 'POST':
         form = ProfileEditForm(request.POST, request.FILES, instance=user_profile)
-        if form.is_valid():
-            form.save()
+        if form.is_valid(): #check form validity
+            form.save()  #save the form
             if request.POST.get('delete_avatar'):
                 user_profile.avatar.delete(save=True)
+            #update the user object as well
             user.email = form.cleaned_data['email']
             user.first_name = form.cleaned_data["first_name"]
             user.last_name = form.cleaned_data["last_name"]
             user.save()
             return redirect('store:profile')
     else:
+        #populate the form with the user profile data
         form = ProfileEditForm(instance=user_profile, initial={'email': user.email, 'first_name': user.first_name, 'last_name': user.last_name})
 
     return render(request, 'store/profile.html', {'form': form, 'user_profile': user_profile})
 
 @login_required
 def user_dashboard(request):
-    purchase_list = Purchase.objects.filter(user=request.user).order_by('-created_at')
+    #show the logged in users purchase history
+    purchase_list = Purchase.objects.filter(user=request.user).order_by('-created_at') #order by date, - for descending
     paginator = Paginator(purchase_list, 5)
     page = request.GET.get('page')
     purchases = paginator.get_page(page)

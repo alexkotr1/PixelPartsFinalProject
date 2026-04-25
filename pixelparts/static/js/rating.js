@@ -3,9 +3,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!box) return;
 
     const stars = box.querySelectorAll('.star');
-    const productId = box.dataset.productId;
-    let userRating = parseInt(box.dataset.userRating) || 0;
+    const productId = box.dataset.productId; //set via data-product-id attribute
+    let userRating = parseInt(box.dataset.userRating) || 0; // 0 if user hasnt rated
 
+    //function to fill starts till it hits the value and unfill the rest
     function paint(value) {
         stars.forEach(function (star) {
             const v = parseInt(star.dataset.value);
@@ -18,11 +19,12 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    paint(userRating);
+    paint(userRating); //fill users existing rating on page load
 
     stars.forEach(function (star) {
         star.addEventListener('click', function () {
             const value = parseInt(star.dataset.value);
+            //scrape the csrf token from the hidden <form>{% csfr token%}</form> in rating.html
             const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
             const formData = new FormData();
             formData.append('rating', value);
@@ -34,9 +36,9 @@ document.addEventListener('DOMContentLoaded', function () {
             })
                 .then(function (response) { return response.json(); })
                 .then(function (data) {
+                    //update the stars and the average rating without reloading the page
                     userRating = data.user_rating;
                     paint(userRating);
-                    console.log(data);
                     document.querySelector('.rating-average').textContent = data.average;
                     document.querySelector('.rating-count').textContent = data.count + (data.count === 1 ? ' rating' : ' ratings');
                 });

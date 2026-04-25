@@ -4,6 +4,8 @@ from store.models import Product
 
 # Create your models here.
 
+
+#Purchase Model
 class Purchase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     total = models.DecimalField(max_digits=6, decimal_places=2)
@@ -12,7 +14,7 @@ class Purchase(models.Model):
     def __str__(self):
         return str(self.user) + " - " + str(self.created_at) + " - " + str(self.total)
 
-
+#PurchaseItem Model
 class PurchaseItem(models.Model):
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
     product = models.ForeignKey('store.Product', on_delete=models.CASCADE)
