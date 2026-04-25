@@ -8,7 +8,7 @@ from store.models import Product
 #Purchase Model
 class Purchase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    total = models.DecimalField(max_digits=6, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

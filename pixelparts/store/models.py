@@ -33,7 +33,7 @@ class Product(models.Model):
     #set_null means if a category is deleted products wont get deleted and the category will be set to null
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
     brand = models.CharField(max_length=80)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
     #PositiveIntegerField prevents negative stock at the db level
     stock = models.PositiveIntegerField()
     description = models.TextField(blank=True)
