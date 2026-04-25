@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link href="{% static 'css/404.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <section class="not-found">
+        <h1>404</h1>
+        <p>Page not found.</p>
+        <a href="{% url 'store:home' %}">Go home</a>
+    </section>
+{% endblock %}
