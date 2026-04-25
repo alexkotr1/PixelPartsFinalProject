@@ -18,8 +18,8 @@
             <label for="id_parent">Parent</label>
             <select name="parent" id="id_parent">
                 <option value="">-- None --</option>
-                {% for category in categories %}
-                    <option value="{{ category.pk }}" {% if category and category.parent and category.pk == category.parent.pk %}selected{% endif %}>{{ category.name }}</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.pk }}" {% if category.parent and cat.pk == category.parent.pk %}selected{% endif %}>{{ cat.name }}</option>
                 {% endfor %}
             </select>
 
